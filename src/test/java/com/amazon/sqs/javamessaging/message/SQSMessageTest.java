@@ -54,6 +54,7 @@ public class SQSMessageTest {
     final String myByte = "myByte";
     final String myString = "myString";
     final String myNumber = "myNumber";
+    final String myBinary = "myBinary";
 
     @Before
     public void setup() {
@@ -78,6 +79,7 @@ public class SQSMessageTest {
         message.setByteProperty("myByteProperty", (byte) 'a');
         message.setStringProperty("myString", "StringValue");
         message.setStringProperty("myNumber", "500");
+        message.setStringProperty("myBinary", "binarydata");
 
         Assert.assertTrue(message.propertyExists("myTrueBoolean"));
         Assert.assertEquals(message.getObjectProperty("myTrueBoolean"), true);
@@ -124,6 +126,10 @@ public class SQSMessageTest {
         Assert.assertEquals(message.getDoubleProperty("myNumber"), 500d);
         Assert.assertEquals(message.getIntProperty("myNumber"), 500);
 
+        Assert.assertTrue(message.propertyExists("myBinary"));
+        Assert.assertEquals(message.getObjectProperty("myBinary"), "binarydata");
+        Assert.assertEquals(message.getStringProperty("myBinary"), "binarydata");
+
         // Validate property names
         Set<String> propertyNamesSet = new HashSet<String>(Arrays.asList(
                 "myTrueBoolean",
@@ -135,6 +141,7 @@ public class SQSMessageTest {
                 "myShort",
                 "myByteProperty",
                 "myNumber",
+                "myBinary",
                 "myString"));
 
         Enumeration<String > propertyNames = message.getPropertyNames();
@@ -155,6 +162,7 @@ public class SQSMessageTest {
         Assert.assertFalse(message.propertyExists("myByteProperty"));
         Assert.assertFalse(message.propertyExists("myString"));
         Assert.assertFalse(message.propertyExists("myNumber"));
+        Assert.assertFalse(message.propertyExists("myBinary"));
 
         propertyNames = message.getPropertyNames();
         assertFalse(propertyNames.hasMoreElements());
@@ -330,6 +338,10 @@ public class SQSMessageTest {
                                                     .withDataType(SQSMessagingClientConstants.NUMBER)
                                                     .withStringValue("500"));
 
+        messageAttributes.put(myBinary, new MessageAttributeValue()
+                                                    .withDataType(SQSMessagingClientConstants.BINARY)
+                                                    .withStringValue("binarydata"));
+
         com.amazonaws.services.sqs.model.Message sqsMessage = new com.amazonaws.services.sqs.model.Message()
                 .withMessageAttributes(messageAttributes)
                 .withAttributes(systemAttributes)
@@ -383,6 +395,9 @@ public class SQSMessageTest {
         Assert.assertEquals(message.getFloatProperty(myNumber), 500f);
         Assert.assertEquals(message.getDoubleProperty(myNumber), 500d);
 
+        Assert.assertTrue(message.propertyExists(myBinary));
+        Assert.assertEquals(message.getObjectProperty(myBinary), "binarydata");
+        Assert.assertEquals(message.getStringProperty(myBinary), "binarydata");
 
         // Validate property names
         Set<String> propertyNamesSet = new HashSet<String>(Arrays.asList(
@@ -396,6 +411,7 @@ public class SQSMessageTest {
                 myByte,
                 myString,
                 myNumber,
+                myBinary,
                 JMSX_DELIVERY_COUNT));
 
         Enumeration<String > propertyNames = message.getPropertyNames();
@@ -416,6 +432,7 @@ public class SQSMessageTest {
         Assert.assertFalse(message.propertyExists("myByteProperty"));
         Assert.assertFalse(message.propertyExists("myString"));
         Assert.assertFalse(message.propertyExists("myNumber"));
+        Assert.assertFalse(message.propertyExists("myBinary"));
 
         propertyNames = message.getPropertyNames();
         assertFalse(propertyNames.hasMoreElements());
